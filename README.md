@@ -1,1 +1,1 @@
-new project let's go...!
+starting out...!
