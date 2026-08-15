@@ -186,8 +186,8 @@ const eventSchema = new Schema<IEvent>(
   },
 );
 
-// Generate a stable, URL-safe slug from the title only when the title changes.
-eventSchema.pre("save", function (this: EventDocument) {
+// Generate a stable, URL-safe slug from the title before Mongoose validates required fields.
+eventSchema.pre("validate", function (this: EventDocument) {
   ensureNonEmptyString(this.title, "Title");
   ensureNonEmptyString(this.description, "Description");
   ensureNonEmptyString(this.overview, "Overview");
