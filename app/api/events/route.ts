@@ -6,7 +6,10 @@ export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
 
+    // Accepts JSON only -------
     // const eventData = await req.json();
+
+    // Accepts form data only -------
     const formData = await req.formData();
     const eventData = Object.fromEntries(formData.entries());
 
