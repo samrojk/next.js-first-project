@@ -1,5 +1,7 @@
 "use client";
+
 import Image from "next/image";
+import posthog from "posthog-js";
 
 const ExploreBtn = () => {
   return (
@@ -7,6 +9,12 @@ const ExploreBtn = () => {
       type="button"
       id="explore-btn"
       onClick={() => {
+        if (
+          process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN &&
+          process.env.NEXT_PUBLIC_POSTHOG_HOST
+        ) {
+          posthog.capture("event_exploration_started");
+        }
         console.log("clicked");
       }}
       className="mt-7 mx-auto"
