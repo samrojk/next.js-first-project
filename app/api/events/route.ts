@@ -48,11 +48,15 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    console.log("Cloudinary config:", {
-      cloud_name: cloudinary.config().cloud_name,
-      api_key: cloudinary.config().api_key,
-      has_api_secret: !!cloudinary.config().api_secret,
-    });
+    // for testing purpose only ---------------------------->
+
+    // console.log("Cloudinary config:", {
+    //   cloud_name: cloudinary.config().cloud_name,
+    //   api_key: cloudinary.config().api_key,
+    //   has_api_secret: !!cloudinary.config().api_secret,
+    // });
+    
+    // <----------------------------------------------------
 
     const uploadResult = await new Promise<{ secure_url: string }>(
       (resolve, reject) => {
