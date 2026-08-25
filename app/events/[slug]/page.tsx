@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
 import EventCard from "@/components/EventCard";
@@ -42,7 +43,7 @@ const EventTags = ({ tags }: { tags: string[] }) => (
   </div>
 );
 
-const EventDetailsPage = async ({
+const EventDetailsContent = async ({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -51,10 +52,9 @@ const EventDetailsPage = async ({
   const request = await fetch(`${BASE_URL}/api/events/${slug}`);
   const {
     event: {
-      title,
+      _id,
       description,
       image,
-      venue,
       overview,
       location,
       date,
@@ -71,7 +71,7 @@ const EventDetailsPage = async ({
 
   const bookings = 10;
 
-  const similarEvents: IEvent[] = await getSimilarEventsBySlug(slug);
+  const similarEvents = await getSimilarEventsBySlug(slug);
 
   return (
     <section id="event">
@@ -131,7 +131,9 @@ const EventDetailsPage = async ({
               <p className="text-sm">Be the first one to book the spot!</p>
             )}
 
-            <BookEvent />
+            {/* <BookEvent eventId={event.id} slug={event.slug} /> */}
+            <BookEvent eventId={_id} slug={slug} />
+            {/* <BookEvent /> */}
           </div>
         </aside>
       </div>
@@ -140,7 +142,7 @@ const EventDetailsPage = async ({
         <h2>Similar Events</h2>
         <div className="events">
           {similarEvents.length > 0 &&
-            similarEvents.map((similarEvent: IEvent) => (
+            similarEvents.map((similarEvent) => (
               <EventCard key={similarEvent.title} {...similarEvent} />
             ))}
         </div>
@@ -148,5 +150,11 @@ const EventDetailsPage = async ({
     </section>
   );
 };
+
+const EventDetailsPage = (props: { params: Promise<{ slug: string }> }) => (
+  <Suspense fallback={<section id="event">Loading event...</section>}>
+    <EventDetailsContent {...props} />
+  </Suspense>
+);
 
 export default EventDetailsPage;
