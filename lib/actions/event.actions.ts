@@ -2,6 +2,28 @@
 
 import { Event } from "@/database/event.model";
 import connectToDatabase from "@/lib/mongodb";
+import { cacheLife } from "next/cache";
+
+export const getEvents = async () => {
+  "use cache";
+  cacheLife("hours");
+
+  try {
+    await connectToDatabase();
+
+    const events = await Event.find().sort({ createdAt: -1 }).lean();
+
+    return events.map((event) => ({
+      ...event,
+      _id: event._id.toString(),
+      createdAt: event.createdAt.toISOString(),
+      updatedAt: event.updatedAt.toISOString(),
+    }));
+  } catch (error) {
+    console.error("EVENT FETCHING ERROR:", error);
+    return [];
+  }
+};
 
 export const getSimilarEventsBySlug = async (slug: string) => {
   try {
