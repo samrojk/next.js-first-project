@@ -1,11 +1,12 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
+import {
+  getEventBySlug,
+  getSimilarEventsBySlug,
+} from "@/lib/actions/event.actions";
 import EventCard from "@/components/EventCard";
 import BookEvent from "@/components/BookEvent";
 import Image from "next/image";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const EventDetailItem = ({
   icon,
@@ -49,25 +50,24 @@ const EventDetailsContent = async ({
   params: Promise<{ slug: string }>;
 }) => {
   const { slug } = await params;
-  const request = await fetch(`${BASE_URL}/api/events/${slug}`);
-  const {
-    event: {
-      _id,
-      description,
-      image,
-      overview,
-      location,
-      date,
-      time,
-      mode,
-      audience,
-      agenda,
-      organizer,
-      tags,
-    },
-  } = await request.json();
+  const event = await getEventBySlug(slug);
 
-  if (!description) return notFound();
+  if (!event) return notFound();
+
+  const {
+    _id,
+    description,
+    image,
+    overview,
+    location,
+    date,
+    time,
+    mode,
+    audience,
+    agenda,
+    organizer,
+    tags,
+  } = event;
 
   const bookings = 10;
 

@@ -25,6 +25,29 @@ export const getEvents = async () => {
   }
 };
 
+export const getEventBySlug = async (slug: string) => {
+  "use cache";
+  cacheLife("hours");
+
+  try {
+    await connectToDatabase();
+
+    const event = await Event.findOne({ slug }).lean();
+
+    if (!event) return null;
+
+    return {
+      ...event,
+      _id: event._id.toString(),
+      createdAt: event.createdAt.toISOString(),
+      updatedAt: event.updatedAt.toISOString(),
+    };
+  } catch (error) {
+    console.error("EVENT FETCH BY SLUG ERROR:", error);
+    return null;
+  }
+};
+
 export const getSimilarEventsBySlug = async (slug: string) => {
   try {
     await connectToDatabase();
